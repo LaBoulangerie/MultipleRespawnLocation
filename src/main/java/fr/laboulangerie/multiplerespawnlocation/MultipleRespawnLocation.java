@@ -1,10 +1,9 @@
-package me.gabij.multiplebedspawn;
+package fr.laboulangerie.multiplerespawnlocation;
 
-import me.gabij.multiplebedspawn.commands.NameCommand;
-import me.gabij.multiplebedspawn.commands.RemoveCommand;
-import me.gabij.multiplebedspawn.commands.RespawnMenuCommand;
-import me.gabij.multiplebedspawn.commands.ShareCommand;
-import me.gabij.multiplebedspawn.listeners.*;
+import fr.laboulangerie.multiplerespawnlocation.commands.MrlCommand;
+import fr.laboulangerie.multiplerespawnlocation.hooks.MineletHook;
+import fr.laboulangerie.multiplerespawnlocation.hooks.MultiSpawnHook;
+import fr.laboulangerie.multiplerespawnlocation.listeners.*;
 
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.Configuration;
@@ -13,11 +12,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 
-public final class MultipleBedSpawn extends JavaPlugin {
+public final class MultipleRespawnLocation extends JavaPlugin {
 
     private Configuration messages;
 
-    private static MultipleBedSpawn instance;
+    private static MultipleRespawnLocation instance;
 
     @Override
     public void onEnable() {
@@ -27,22 +26,22 @@ public final class MultipleBedSpawn extends JavaPlugin {
         saveConfig();
         createLanguageConfig();
 
+        // Initialize hooks after all plugins are loaded
+        getServer().getScheduler().runTaskLater(this, () -> {
+            MineletHook.init();
+            MultiSpawnHook.init();
+        }, 1L);
+
         getServer().getPluginManager().registerEvents(new PlayerRespawnListener(this), this);
         getServer().getPluginManager().registerEvents(new RespawnMenuHandler(this), this);
         getServer().getPluginManager().registerEvents(new RemoveMenuHandler(this), this);
         getServer().getPluginManager().registerEvents(new PlayerGetsOnBedListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+        getServer().getPluginManager().registerEvents(new TabCompleteListener(this), this);
 
         try {
-            CommandMap commandMap = me.gabij.multiplebedspawn.utils.CommandMapUtil.getCommandMap();
-            commandMap.register(this.getName(), new RespawnMenuCommand(this, "respawnbed"));
-            commandMap.register(this.getName(), new NameCommand(this, "renamebed"));
-            if (this.getConfig().getBoolean("remove-beds-gui")) {
-                commandMap.register(this.getName(), new RemoveCommand(this, "removebed"));
-            }
-            if (this.getConfig().getBoolean("bed-sharing")) {
-                commandMap.register(this.getName(), new ShareCommand(this, "sharebed"));
-            }
+            CommandMap commandMap = fr.laboulangerie.multiplerespawnlocation.utils.CommandMapUtil.getCommandMap();
+            commandMap.register(this.getName(), new MrlCommand(this, "mrl"));
             this.getLogger().info("Commands added successfully");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             this.getLogger().warning("Could not access commandMap. Commands will not work");
@@ -50,7 +49,7 @@ public final class MultipleBedSpawn extends JavaPlugin {
         }
     }
 
-    public static MultipleBedSpawn getInstance() {
+    public static MultipleRespawnLocation getInstance() {
         return instance;
     }
 

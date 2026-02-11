@@ -1,9 +1,9 @@
-package me.gabij.multiplebedspawn.utils;
+package fr.laboulangerie.multiplerespawnlocation.utils;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
-import me.gabij.multiplebedspawn.models.BedData;
-import me.gabij.multiplebedspawn.models.BedsDataType;
-import me.gabij.multiplebedspawn.models.PlayerBedsData;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
+import fr.laboulangerie.multiplerespawnlocation.models.BedData;
+import fr.laboulangerie.multiplerespawnlocation.models.BedsDataType;
+import fr.laboulangerie.multiplerespawnlocation.models.PlayerBedsData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -15,11 +15,11 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.gabij.multiplebedspawn.utils.BedsUtils.checksIfBedExists;
+import static fr.laboulangerie.multiplerespawnlocation.utils.BedsUtils.checksIfBedExists;
 
 public class PlayerUtils {
 
-    static MultipleBedSpawn plugin = MultipleBedSpawn.getInstance();
+    static MultipleRespawnLocation plugin = MultipleRespawnLocation.getInstance();
 
     public static String locationToString(Location loc) {
         return loc.getWorld().getName() + ":" + loc.getX() + ":" + loc.getY() + ":" + loc.getZ();

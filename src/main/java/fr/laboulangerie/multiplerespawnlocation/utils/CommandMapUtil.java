@@ -1,4 +1,4 @@
-package me.gabij.multiplebedspawn.utils;
+package fr.laboulangerie.multiplerespawnlocation.utils;
 
 import java.lang.reflect.Field;
 

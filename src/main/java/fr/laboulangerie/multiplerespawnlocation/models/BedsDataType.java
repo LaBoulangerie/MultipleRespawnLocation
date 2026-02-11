@@ -1,4 +1,4 @@
-package me.gabij.multiplebedspawn.models;
+package fr.laboulangerie.multiplerespawnlocation.models;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.bukkit.persistence.PersistentDataAdapterContext;
@@ -47,9 +47,15 @@ public class BedsDataType implements PersistentDataType<byte[], PlayerBedsData> 
         @Override
         protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
             String className = desc.getName();
-            String oldPackageName = getAsciiPackageName();
-            if (className.startsWith(oldPackageName)) {
-                className = className.replace(oldPackageName, "me.gabij.");
+            // Handle migration from old package names
+            String oldPackage1 = getAsciiPackageName(); // me.gabrielfj.
+            String oldPackage2 = "me.gabij.multiplebedspawn.models.";
+            String newPackage = "fr.laboulangerie.multiplerespawnlocation.models.";
+
+            if (className.startsWith(oldPackage1)) {
+                className = className.replace(oldPackage1, "fr.laboulangerie.multiplerespawnlocation.");
+            } else if (className.startsWith("me.gabij.multiplebedspawn.")) {
+                className = className.replace("me.gabij.multiplebedspawn.", "fr.laboulangerie.multiplerespawnlocation.");
             }
             return super.resolveClass(ObjectStreamClass.lookup(Class.forName(className)));
         }

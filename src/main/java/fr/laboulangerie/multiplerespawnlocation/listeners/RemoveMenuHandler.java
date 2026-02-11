@@ -1,9 +1,9 @@
-package me.gabij.multiplebedspawn.listeners;
+package fr.laboulangerie.multiplerespawnlocation.listeners;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
-import me.gabij.multiplebedspawn.models.BedData;
-import me.gabij.multiplebedspawn.models.BedsDataType;
-import me.gabij.multiplebedspawn.models.PlayerBedsData;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
+import fr.laboulangerie.multiplerespawnlocation.models.BedData;
+import fr.laboulangerie.multiplerespawnlocation.models.BedsDataType;
+import fr.laboulangerie.multiplerespawnlocation.models.PlayerBedsData;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,18 +20,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.gabij.multiplebedspawn.utils.BedsUtils.removePlayerBed;
-import static me.gabij.multiplebedspawn.utils.PlayerUtils.getPlayerBedsCount;
+import static fr.laboulangerie.multiplerespawnlocation.utils.BedsUtils.removePlayerBed;
+import static fr.laboulangerie.multiplerespawnlocation.utils.PlayerUtils.getPlayerBedsCount;
 
 public class RemoveMenuHandler implements Listener {
-    static MultipleBedSpawn plugin;
+    static MultipleRespawnLocation plugin;
 
-    public RemoveMenuHandler(MultipleBedSpawn plugin) {
+    public RemoveMenuHandler(MultipleRespawnLocation plugin) {
         RemoveMenuHandler.plugin = plugin;
     }
 
     public static void openRemoveMenu(Player p) {
-
         // gets how much beds player has to use on for loop and for the if check
         PersistentDataContainer playerData = p.getPersistentDataContainer();
         PlayerBedsData playerBedsData = null;

@@ -1,9 +1,9 @@
-package me.gabij.multiplebedspawn.listeners;
+package fr.laboulangerie.multiplerespawnlocation.listeners;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
-import me.gabij.multiplebedspawn.models.BedData;
-import me.gabij.multiplebedspawn.models.BedsDataType;
-import me.gabij.multiplebedspawn.models.PlayerBedsData;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
+import fr.laboulangerie.multiplerespawnlocation.models.BedData;
+import fr.laboulangerie.multiplerespawnlocation.models.BedsDataType;
+import fr.laboulangerie.multiplerespawnlocation.models.PlayerBedsData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -20,14 +20,14 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 import java.util.List;
 
-import static me.gabij.multiplebedspawn.listeners.RespawnMenuHandler.openRespawnMenu;
-import static me.gabij.multiplebedspawn.utils.BedsUtils.checksIfBedExists;
-import static me.gabij.multiplebedspawn.utils.PlayerUtils.locationToString;
+import static fr.laboulangerie.multiplerespawnlocation.listeners.RespawnMenuHandler.openRespawnMenu;
+import static fr.laboulangerie.multiplerespawnlocation.utils.BedsUtils.checksIfBedExists;
+import static fr.laboulangerie.multiplerespawnlocation.utils.PlayerUtils.locationToString;
 
 public class PlayerRespawnListener implements Listener {
-    static MultipleBedSpawn plugin;
+    static MultipleRespawnLocation plugin;
 
-    public PlayerRespawnListener(MultipleBedSpawn plugin) {
+    public PlayerRespawnListener(MultipleRespawnLocation plugin) {
         PlayerRespawnListener.plugin = plugin;
     }
 
