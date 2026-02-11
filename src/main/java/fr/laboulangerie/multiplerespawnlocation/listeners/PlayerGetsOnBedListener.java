@@ -1,8 +1,8 @@
-package me.gabij.multiplebedspawn.listeners;
+package fr.laboulangerie.multiplerespawnlocation.listeners;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
-import me.gabij.multiplebedspawn.models.BedsDataType;
-import me.gabij.multiplebedspawn.models.PlayerBedsData;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
+import fr.laboulangerie.multiplerespawnlocation.models.BedsDataType;
+import fr.laboulangerie.multiplerespawnlocation.models.PlayerBedsData;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -18,14 +18,14 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 import java.util.UUID;
 
-import static me.gabij.multiplebedspawn.utils.BedsUtils.getMaxNumberOfBeds;
-import static me.gabij.multiplebedspawn.utils.PlayerUtils.getPlayerBedsCount;
+import static fr.laboulangerie.multiplerespawnlocation.utils.BedsUtils.getMaxNumberOfBeds;
+import static fr.laboulangerie.multiplerespawnlocation.utils.PlayerUtils.getPlayerBedsCount;
 
 public class PlayerGetsOnBedListener implements Listener {
 
-    MultipleBedSpawn plugin;
+    MultipleRespawnLocation plugin;
 
-    public PlayerGetsOnBedListener(MultipleBedSpawn plugin) {
+    public PlayerGetsOnBedListener(MultipleRespawnLocation plugin) {
         this.plugin = plugin;
     }
 

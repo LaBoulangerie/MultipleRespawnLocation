@@ -1,9 +1,11 @@
-package me.gabij.multiplebedspawn.listeners;
+package fr.laboulangerie.multiplerespawnlocation.listeners;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
-import me.gabij.multiplebedspawn.models.BedData;
-import me.gabij.multiplebedspawn.models.BedsDataType;
-import me.gabij.multiplebedspawn.models.PlayerBedsData;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
+import fr.laboulangerie.multiplerespawnlocation.hooks.MineletHook;
+import fr.laboulangerie.multiplerespawnlocation.hooks.MultiSpawnHook;
+import fr.laboulangerie.multiplerespawnlocation.models.BedData;
+import fr.laboulangerie.multiplerespawnlocation.models.BedsDataType;
+import fr.laboulangerie.multiplerespawnlocation.models.PlayerBedsData;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,16 +24,16 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static me.gabij.multiplebedspawn.utils.BedsUtils.checksIfBedExists;
-import static me.gabij.multiplebedspawn.utils.PlayerUtils.*;
-import static me.gabij.multiplebedspawn.utils.RunCommandUtils.runCommandOnSpawn;;
+import static fr.laboulangerie.multiplerespawnlocation.utils.BedsUtils.checksIfBedExists;
+import static fr.laboulangerie.multiplerespawnlocation.utils.PlayerUtils.*;
+import static fr.laboulangerie.multiplerespawnlocation.utils.RunCommandUtils.runCommandOnSpawn;;
 
 @SuppressWarnings("deprecation")
 public class RespawnMenuHandler implements Listener {
 
-    static MultipleBedSpawn plugin;
+    static MultipleRespawnLocation plugin;
 
-    public RespawnMenuHandler(MultipleBedSpawn plugin) {
+    public RespawnMenuHandler(MultipleRespawnLocation plugin) {
         RespawnMenuHandler.plugin = plugin;
     }
 
@@ -112,18 +114,33 @@ public class RespawnMenuHandler implements Listener {
             playerBedsData = playerData.get(new NamespacedKey(plugin, "beds"), new BedsDataType());
         }
 
-        // if the player doesnt have any beds than dont open menu
-        if (playerBedsCount > 0) {
+        // Vérifier les options de spawn disponibles
+        Location hamletSpawn = MineletHook.getPlayerHamletSpawn(p);
+        String worldName = getPlayerRespawnLoc(p).getWorld().getName();
+        boolean hasMultiSpawns = MultiSpawnHook.hasWorldSpawns(worldName);
+
+        // Ouvrir le menu si le joueur a des lits, un hamlet, ou des spawns MultiSpawn
+        if (playerBedsCount > 0 || hamletSpawn != null || hasMultiSpawns) {
 
             // sets stuff to player be invul and invis on spawn
             setPropPlayer(p);
 
             // create inventory
             int bedCount = playerBedsCount + 1;
-            Inventory gui = Bukkit.createInventory(p, 9 * ((int) Math.ceil(bedCount / (Double) 9.0)),
+            if (hamletSpawn != null) {
+                bedCount++;
+            }
+            int inventorySize = 9 * ((int) Math.ceil(bedCount / (Double) 9.0));
+            if (hasMultiSpawns) {
+                inventorySize = Math.max(inventorySize, 18); // Au moins 2 lignes pour les spawns MultiSpawn (slots 9-17)
+            }
+            if (hamletSpawn != null) {
+                inventorySize = Math.max(inventorySize, 27); // Au moins 3 lignes pour le hamlet au slot 18
+            }
+            Inventory gui = Bukkit.createInventory(p, inventorySize,
                     ChatColor.translateAlternateColorCodes('&', plugin.getMessages("menu-title")));
 
-            HashMap<String, BedData> beds = playerBedsData.getPlayerBedData();
+            HashMap<String, BedData> beds = playerBedsData != null ? playerBedsData.getPlayerBedData() : new HashMap<>();
             if (!plugin.getConfig().getBoolean("link-worlds")) {
                 World world = getPlayerRespawnLoc(p).getWorld();
                 HashMap<String, BedData> bedsT = (HashMap<String, BedData>) beds.clone();
@@ -143,7 +160,7 @@ public class RespawnMenuHandler implements Listener {
                 String bedName = plugin.getMessages("default-bed-name").replace("{1}", cont.toString());
                 item_meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', bedName));
                 if (bed.getBedName() != null) {
-                    item_meta.setDisplayName(bed.getBedName());
+                    item_meta.setDisplayName(ChatColor.RESET + bed.getBedName());
                 }
                 PersistentDataContainer data = item_meta.getPersistentDataContainer();
 
@@ -177,7 +194,7 @@ public class RespawnMenuHandler implements Listener {
 
                 item_meta.setLore(lore);
                 item.setItemMeta(item_meta);
-                gui.addItem(item);
+                gui.setItem(cont.get() - 1, item);
                 cont.getAndIncrement();
             });
 
@@ -187,11 +204,70 @@ public class RespawnMenuHandler implements Listener {
                 }, 10L);
             }
 
-            ItemStack item = new ItemStack(Material.GRASS_BLOCK, 1);
-            ItemMeta item_meta = item.getItemMeta();
-            item_meta.setDisplayName(ChatColor.YELLOW + "SPAWN");
-            item.setItemMeta(item_meta);
-            gui.setItem(9 * ((int) Math.ceil(bedCount / (Double) 9.0)) - 1, item);
+            // Ajouter option Hamlet si joueur a un spawn de hamlet
+            if (hamletSpawn != null) {
+                ItemStack hamletItem = new ItemStack(Material.CAMPFIRE, 1);
+                ItemMeta hamletMeta = hamletItem.getItemMeta();
+                hamletMeta.setDisplayName(ChatColor.BLUE + "Hamlet");
+
+                List<String> hamletLore = new ArrayList<>();
+                String hamletName = MineletHook.getPlayerHamletName(p);
+                if (hamletName != null) {
+                    hamletLore.add(ChatColor.WHITE + hamletName);
+                }
+                hamletLore.add(ChatColor.GRAY + "X: " + hamletSpawn.getBlockX() +
+                              " Y: " + hamletSpawn.getBlockY() +
+                              " Z: " + hamletSpawn.getBlockZ());
+                hamletMeta.setLore(hamletLore);
+
+                PersistentDataContainer hamletData = hamletMeta.getPersistentDataContainer();
+                hamletData.set(new NamespacedKey(plugin, "hamlet"), PersistentDataType.STRING, "true");
+
+                hamletItem.setItemMeta(hamletMeta);
+                gui.setItem(18, hamletItem);
+            }
+
+            // Ajouter les spawns MultiSpawn sur la ligne 2 (slots 9-17)
+            List<MultiSpawnHook.SpawnInfo> multiSpawns = MultiSpawnHook.getWorldSpawns(worldName);
+
+            int multiSpawnSlot = 9;
+            for (MultiSpawnHook.SpawnInfo spawnInfo : multiSpawns) {
+                if (multiSpawnSlot > 17) break; // Max 9 spawns sur la ligne 2
+
+                Material iconMaterial = Material.ENDER_PEARL; // Fallback
+                String iconName = spawnInfo.getIcon();
+                if (iconName != null) {
+                    try {
+                        iconMaterial = Material.valueOf(iconName.toUpperCase());
+                    } catch (IllegalArgumentException ignored) {}
+                }
+                ItemStack spawnItem = new ItemStack(iconMaterial, 1);
+                ItemMeta spawnMeta = spawnItem.getItemMeta();
+                spawnMeta.setDisplayName(ChatColor.AQUA + spawnInfo.getName());
+
+                List<String> spawnLore = new ArrayList<>();
+                Location spawnLoc = spawnInfo.getLocation();
+                spawnLore.add(ChatColor.GRAY + "X: " + spawnLoc.getBlockX() +
+                             " Y: " + spawnLoc.getBlockY() +
+                             " Z: " + spawnLoc.getBlockZ());
+                spawnMeta.setLore(spawnLore);
+
+                PersistentDataContainer spawnData = spawnMeta.getPersistentDataContainer();
+                spawnData.set(new NamespacedKey(plugin, "multispawn"), PersistentDataType.STRING, spawnInfo.getName());
+
+                spawnItem.setItemMeta(spawnMeta);
+                gui.setItem(multiSpawnSlot, spawnItem);
+                multiSpawnSlot++;
+            }
+
+            // Afficher le bloc SPAWN seulement si MultiSpawn n'a pas de spawns
+            if (!hasMultiSpawns) {
+                ItemStack item = new ItemStack(Material.GRASS_BLOCK, 1);
+                ItemMeta item_meta = item.getItemMeta();
+                item_meta.setDisplayName(ChatColor.YELLOW + "SPAWN");
+                item.setItemMeta(item_meta);
+                gui.setItem(8, item); // Dernier slot de la 1ère ligne
+            }
 
             // I dont know why but if openInventory is not on a scheduler is does not open
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -253,7 +329,39 @@ public class RespawnMenuHandler implements Listener {
                         }, 0L);
                     }
 
-                } else if (index == 9 * ((int) Math.ceil(bedCount / (Double) 9.0)) - 1) {
+                } else if (e.getCurrentItem().getType() == Material.CAMPFIRE) {
+                    // Clic sur le spawn du hamlet
+                    ItemMeta meta = e.getCurrentItem().getItemMeta();
+                    PersistentDataContainer data = meta.getPersistentDataContainer();
+                    if (data.has(new NamespacedKey(plugin, "hamlet"), PersistentDataType.STRING)) {
+                        Location spawn = MineletHook.getPlayerHamletSpawn(p);
+                        if (spawn != null) {
+                            undoPropPlayer(p);
+                            playerData.remove(new NamespacedKey(plugin, "spawnLoc"));
+                            p.teleport(spawn);
+                            runCommandOnSpawn(p);
+                        }
+                    }
+                } else if (e.getCurrentItem().hasItemMeta()) {
+                    // Clic sur un spawn MultiSpawn (identifié par le tag "multispawn")
+                    ItemMeta meta = e.getCurrentItem().getItemMeta();
+                    PersistentDataContainer data = meta.getPersistentDataContainer();
+                    if (data.has(new NamespacedKey(plugin, "multispawn"), PersistentDataType.STRING)) {
+                        String spawnName = data.get(new NamespacedKey(plugin, "multispawn"), PersistentDataType.STRING);
+                        String worldName = getPlayerRespawnLoc(p).getWorld().getName();
+                        List<MultiSpawnHook.SpawnInfo> spawns = MultiSpawnHook.getWorldSpawns(worldName);
+                        for (MultiSpawnHook.SpawnInfo spawnInfo : spawns) {
+                            if (spawnInfo.getName().equals(spawnName)) {
+                                undoPropPlayer(p);
+                                playerData.remove(new NamespacedKey(plugin, "spawnLoc"));
+                                p.teleport(spawnInfo.getLocation());
+                                runCommandOnSpawn(p);
+                                break;
+                            }
+                        }
+                    }
+                } else if (index == 8 && e.getCurrentItem().getType() == Material.GRASS_BLOCK) {
+                    // Dernier slot de la 1ère ligne (SPAWN) - seulement si pas de MultiSpawn
                     undoPropPlayer(p);
                     Location location = getPlayerRespawnLoc(p);
                     playerData.remove(new NamespacedKey(plugin, "spawnLoc"));

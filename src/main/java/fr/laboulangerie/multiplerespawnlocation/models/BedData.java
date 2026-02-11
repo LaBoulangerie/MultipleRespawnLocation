@@ -1,4 +1,4 @@
-package me.gabij.multiplebedspawn.models;
+package fr.laboulangerie.multiplerespawnlocation.models;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -1,11 +1,11 @@
-name: MultipleBedSpawn
+name: MultipleRespawnLocation
 version: '${project.version}'
-main: me.gabij.multiplebedspawn.MultipleBedSpawn
+main: fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation
 api-version: 1.19
-load: STARTUP
-authors: [ Gabi ]
-description: A simple plugin to allow players to choose which bed to respawn into.
-website: https://github.com/GabiJunkes
+softdepend: [Minelet, MultiSpawn]
+authors: [Gabi, LaBoulangerie, Red69_Leaf]
+description: Allow players to save multiple bed spawn points and choose where to respawn. Supports Minelet hamlet spawns.
+website: https://github.com/LaBoulworkaround/MultipleRespawnLocation
 permissions:
   multiplebedspawn.skipcooldown:
     description: Allows the player to skip the bed's respawn cooldown
@@ -13,5 +13,3 @@ permissions:
   multiplebedspawn.maxcount.*:
     description: Allows to set custom max number of beds (ignores the config)
     default: false
-
-

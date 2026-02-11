@@ -1,13 +1,13 @@
-package me.gabij.multiplebedspawn.utils;
+package fr.laboulangerie.multiplerespawnlocation.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
 
 public class RunCommandUtils {
-    static MultipleBedSpawn plugin = MultipleBedSpawn.getInstance();
+    static MultipleRespawnLocation plugin = MultipleRespawnLocation.getInstance();
 
     public static void runCommandOnSpawn(Player p) {
         String commandString = plugin.getConfig().getString("command-on-spawn");

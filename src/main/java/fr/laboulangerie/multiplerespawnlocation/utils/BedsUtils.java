@@ -1,9 +1,9 @@
-package me.gabij.multiplebedspawn.utils;
+package fr.laboulangerie.multiplerespawnlocation.utils;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
-import me.gabij.multiplebedspawn.models.BedData;
-import me.gabij.multiplebedspawn.models.BedsDataType;
-import me.gabij.multiplebedspawn.models.PlayerBedsData;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
+import fr.laboulangerie.multiplerespawnlocation.models.BedData;
+import fr.laboulangerie.multiplerespawnlocation.models.BedsDataType;
+import fr.laboulangerie.multiplerespawnlocation.models.PlayerBedsData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -20,7 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.HashMap;
 
 public class BedsUtils {
-    static MultipleBedSpawn plugin = MultipleBedSpawn.getInstance();
+    static MultipleRespawnLocation plugin = MultipleRespawnLocation.getInstance();
 
     public static void removePlayerBed(String bedUUID, Player p) {
         PersistentDataContainer playerData = p.getPersistentDataContainer();

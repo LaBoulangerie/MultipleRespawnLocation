@@ -1,6 +1,6 @@
-package me.gabij.multiplebedspawn.listeners;
+package fr.laboulangerie.multiplerespawnlocation.listeners;
 
-import me.gabij.multiplebedspawn.MultipleBedSpawn;
+import fr.laboulangerie.multiplerespawnlocation.MultipleRespawnLocation;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -10,13 +10,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import static me.gabij.multiplebedspawn.utils.PlayerUtils.stringToLocation;
-import static me.gabij.multiplebedspawn.utils.PlayerUtils.undoPropPlayer;
+import static fr.laboulangerie.multiplerespawnlocation.utils.PlayerUtils.stringToLocation;
+import static fr.laboulangerie.multiplerespawnlocation.utils.PlayerUtils.undoPropPlayer;
 
 public class PlayerJoinListener implements Listener {
-    MultipleBedSpawn plugin;
+    MultipleRespawnLocation plugin;
 
-    public PlayerJoinListener(MultipleBedSpawn plugin) {
+    public PlayerJoinListener(MultipleRespawnLocation plugin) {
         this.plugin = plugin;
     }
 
